@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Small Business - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .content {
+            min-height: 100%;
+        }
+
+        .content-inside {
+            padding: 20px;
+            padding-bottom: 50px;
+        }
+
+        .footer {
+            height: 50px;
+            margin-top: -50px;
+        }
+        .myclass {
+            background-color: aquamarine;
+            border-radius: 50px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Studnts Content-->
+    <div id="Theme" >
+        <button class= "btn-primary mt-3 me-3" onclick="changeTheme()" style="float: right;border-radius: 50px;">Change Theme</button>
+            <div class="row">
+                <div class="ms-5 pt-3 col" style="width: 200px;" id="MyStudents">
+                        <label for="studentname">Student's name:</label><br>
+                        <input type="text" id="studentname" name="studentname" value=""><br>
+                        <label for="studentid">ID:</label><br>
+                        <input type="number" id="studentid" name="studentid" min=9><br>
+                        <label for="studentemail">Email:</label><br>
+                        <input type="text" id="studentemail" name="studentemail" value=""><br>
+                        <p>Please select your Gender</p>
+                      <input type="radio" id="Male" name="gender" value="Male">
+                        <label for="male">Male</label>
+                      <input type="radio" id="Female" name="gender" value="Female">
+                        <label for="female">Female</label><br><br>
+                        <button class="btn btn-warning" onclick=ProcessInput()>Done</button>
+                </div>
+                <div id ="MsgWindow" class="ms-5 pt-3 col">
+                </div><br>
+            </div>
+        
+    <!-- <div to presents students in 2 columns in middle> -->
+        <div class="container d-flex justify-content-center">
+            <div class="row align-items-center">
+                <div class="col py-20 px-lg-5 " id="Col1Div" ></div> 
+                <div class="col py-20 px-lg-5 " id="Col2Div"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let students = []
+        let UnID =0
+        let currentTheme ='Default'
+        //gather input
+        function ProcessInput() 
+        {
+            MsgWindow.innerHTML=''
+            let gender_value
+            //process radio button unput
+            var genders = document.getElementsByName('gender')
+            for(var i = 0; i < genders.length ; i++)
+            {
+                    if(genders[i].checked)
+                    {
+                        gender_value = genders[i].value;
+                    }
+                }
+            //collect data Student array
+            let student = {
+                StudentName: studentname.value,
+                StudentId: studentid.value,
+                StudentEmail: studentemail.value,
+                StudentGender: gender_value,
+                UniqueId : UnID++
+            }
+            console.log(student)
+            ValidateData(student)
+        }
+        //Do validation checks on collected input - throw error to user if any issue
+        function ValidateData(student)
+        {
+            let msg = 'Data is validated successfully'
+            let Sname =student.StudentName
+            // removes whitespace from both sides of a string
+            Sname=Sname.trim()
+            if (Sname.length >20)
+            {
+                msg='Name is too long'
+                PrintMsg(msg)
+            }
+            if (Sname.length ==0)
+            {
+                msg='You must enter your name'
+                PrintMsg(msg)
+            }
+            const regex = /\d/
+            const doesItHaveNumber = regex.test(Sname)
+            if (doesItHaveNumber==true)
+             {
+                msg='Name consists numbers'
+                PrintMsg(msg)
+             }
+            let strId=student.StudentId
+            if (strId.indexOf("-")>=0 ||strId.indexOf(".")>=0)
+            {
+                msg='ID should only contain numbers'
+                PrintMsg(msg)
+            }
+            if (strId.length!=9)
+            {
+                msg='ID should be 9 digits'
+                PrintMsg(msg)
+            }
+            let strMail=student.StudentEmail
+            var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+            if (!strMail.match(validRegex)) 
+            {
+                msg='Email is not valid'
+                PrintMsg(msg)
+            }
+            if ((student.StudentGender != 'Female') && (student.StudentGender != 'Male'))
+            {
+                msg='Please pick Gender'
+                PrintMsg(msg)
+            }
+            if (msg=='Data is validated successfully')
+            {
+                AddStudent(student)
+            }
+        }
+        
+        function AddStudent(student){
+            console.log(student)
+            students.push(student)
+            console.log(JSON.stringify(students))
+            PrintOnScreen()
+
+        }
+
+        function PrintOnScreen(){
+            Col1Div.innerHTML=''
+            Col2Div.innerHTML=''
+            students.forEach((student,index)=> index%2 ? Col2Div.innerHTML+=`<div class="card h-100" style="width: 30rem;">
+                    <div class="card-body">
+                        <h2 class="card-title" id="stuName">Student Name:${student.StudentName}</h2>
+                        <button class="btn btn-danger btn-sm" style="float: right;" onclick="deleteStudent(${student.UniqueId})">Delete</button>
+                        <p class="card-text" id="stuID">Id: ${student.StudentId}</p>
+                        <p class="card-text" id= "stuEmail" >Email: ${student.StudentEmail}</p>
+                        <p class="card-text" id="stuGender">Gender: ${student.StudentGender}</p>
+                        <p class="card-text" id="stuUn">Unique ID: ${student.UniqueId} </p>
+                    </div>
+                </div>` :
+                Col1Div.innerHTML+=`<div class="card h-100" style="width: 30rem;">
+                    <div class="card-body">
+                        <h2 class="card-title" id="stuName">Student Name:${student.StudentName}</h2>
+                        <button class="btn btn-danger btn-sm" style="float: right;" onclick="deleteStudent(${student.UniqueId})">Delete</button>
+                        <p class="card-text" id="stuID">Id: ${student.StudentId}</p>
+                        <p class="card-text" id= "stuEmail" >Email: ${student.StudentEmail}</p>
+                        <p class="card-text" id="stuGender">Gender: ${student.StudentGender}</p>
+                        <p class="card-text" id="stuUn">Unique ID: ${student.UniqueId} </p>
+                    </div>
+                </div>`
+                )
+        }
+        function deleteStudent (UnID){
+            let msg= 'Student is deleted'
+            students.forEach((student,index)=> student.UniqueId==UnID? students.splice(index,1): msg)
+            PrintMsg(msg)
+            PrintOnScreen()
+        }
+
+        function changeTheme(){
+            if (currentTheme =='Default')
+                {
+                    document.getElementById("Theme").classList.add('myclass')
+                    currentTheme = 'Changed'
+                }
+            else
+              {
+                document.getElementById("Theme").classList.remove('myclass')
+                currentTheme='Default'
+              }
+        }
+
+        // to implement later
+        function PrintMsg(msg)
+        {
+            console.log(msg)
+            MsgWindow.innerHTML+= `<h2 style="color:red">${msg}</h2>`
+        }
+    </script>
+    </bodMy
