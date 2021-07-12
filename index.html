@@ -163,6 +163,7 @@
             }
             if (msg=='Data is validated successfully')
             {
+                PrintMsg(msg)
                 AddStudent(student)
             }
         }
@@ -226,7 +227,10 @@
         function PrintMsg(msg)
         {
             console.log(msg)
-            MsgWindow.innerHTML+= `<h2 style="color:red">${msg}</h2>`
+            if (msg=='Data is validated successfully')
+                MsgWindow.innerHTML+= `<h2 style="color:green; text-align: left;">${msg}</h2>`
+            else
+                MsgWindow.innerHTML+= `<h2 style="color:red;text-align: left;">${msg}</h2>`
         }
     </script>
     </bodMy
